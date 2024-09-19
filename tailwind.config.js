@@ -12,7 +12,10 @@ export default {
         'ligth-gray' : '#959292',
         'medium-gray' : '#696666',
         'dark-gray': '#1c1e23', 
-        'ligth-purple' :'#E6E0EB' 
+        'ligth-purple' :'#E6E0EB' ,
+        'ligth-orange' : '#FDA574',  // %60
+        'dark-orange' : '#FC6F20',
+        'ligth-green' : '#9BF09D', // %10
       }
     },
   },
