@@ -25,11 +25,13 @@ const app = express();
 
 
 
+
+
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 app.use(cors())
 
-// login , register
+
 app.use("/api/flights", flightsRouter);
 
 

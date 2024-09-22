@@ -1,5 +1,5 @@
 import store from "..";
-import {_setAirline, _setArrivalLocation, _setArrivalTime, _setDepartureLocation, _setEndDate, _setFlightDirection, _setFlights, _setSortBy, _setStartDate, _setStops ,_fetchFlights} from ".";
+import {_setAirline, _setArrivalLocation, _setArrivalTime, _setDepartureLocation, _setEndDate, _setFlightDirection, _setFlights, _setSortBy, _setStartDate, _setStops ,_fetchFlights, _setFilteredFlights} from ".";
 
 export const setAirline = data => store.dispatch(_setAirline(data));
 export const setArrivalLocation = data => store.dispatch(_setArrivalLocation(data));
@@ -12,4 +12,6 @@ export const setSortBy = data => store.dispatch(_setSortBy(data));
 export const setStartDate = data => store.dispatch(_setStartDate(data));
 export const setStops = data => store.dispatch(_setStops(data));
 export const fetchFlights = data => store.dispatch(_fetchFlights());
+export const setFilteredFlights = data => store.dispatch(_setFilteredFlights(data));
+
 

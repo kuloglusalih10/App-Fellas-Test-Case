@@ -1,5 +1,9 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
+import { compareAsc, parseISO, compareDesc } from "date-fns";
+import { formatDuration } from "../../utils/formatDuration";
+import { calculatePrice } from "../../utils/calculatePrice";
+import { formatTimes } from "../../utils/formatTimes";
 
 
 
@@ -9,7 +13,6 @@ export const _fetchFlights = createAsyncThunk(
     async (_, {rejectWithValue}) => {
 
         try{
-            console.log('burada')
             var options = {
                 "method": "GET",
                 "url": "http://localhost:3000/api/flights",
@@ -20,15 +23,38 @@ export const _fetchFlights = createAsyncThunk(
             
             const response  = await axios.request(options);
             
-            if(response.data){
-                return (response.data)
+            if(response.data.res){
+
+                response.data.data.map((flight)=>{
+
+                    // Uçuş süresini hesaplama
+
+                    const formattedDuration = formatDuration(flight);
+                    flight['duration']= formattedDuration;
+
+                    // Fiyat değerini hesaplama
+
+                    const price = calculatePrice(formattedDuration);
+                    flight['price']= price;
+                    
+
+
+                    // Kalkış ve iniş zamanlarını hesaplama
+
+                    const formattedTimes = formatTimes(flight);
+                    flight['arrivalTime']= formattedTimes.arrivalTime;
+                    flight['departureTime']= formattedTimes.departureTime;
+
+
+                })
+
+                return response.data
             }
             else{
                 return rejectWithValue('reject hata');
             } 
         }
         catch(error){
-            console.log('Error', error)
             return rejectWithValue(error);
         }
     }
@@ -45,21 +71,22 @@ const initialState = {
   // Flights
 
   'flights' : [],
+  'filteredFlights' : [],
 
   // Search
 
   'flightDirection' : 'D',
-  'startDate' : new Date(),   // Default olarak bir günlük uçuşlar listelenecek
-  'endDate' : new Date(),
+  'startDate' : '',   // Default olarak bir günlük uçuşlar listelenecek
+  'endDate' : '',
   'departureLocation' : '',
   'arrivalLocation' : '',
 
 
   // Filter
 
-  'sortBy' : '+scheduleTime',
-  'arrivalTime' : '1',          // 1 : öğleden önce  2: öğleden sonra
-  'stops' : 0,
+  'sortBy' : '',
+  'arrivalTime' : '',          // forenoon : öğleden önce  afternoon: öğleden sonra
+  'stops' : -1,
   'airline' : 'Alitalia'  // Airline kodu gelecek
 
 }
@@ -72,6 +99,11 @@ const flights = createSlice({
 
     _setFlights : (state, action) => {
         state.flights = action.payload;
+    },
+
+    _setFilteredFlights : (state, action) => {
+     
+        state.filteredFlights = action.payload;
     },
 
     _setFlightDirection : (state, action) => {
@@ -92,18 +124,62 @@ const flights = createSlice({
 
     _setArrivalLocation : (state, action) => {
         state.departureLocation = action.payload;
+        
     },
 
     _setSortBy : (state, action) => {
+        
         state.sortBy = action.payload;
+
+        // if(action.payload == 'oldest'){
+
+        //     state.filteredFlights = state.filteredFlights.sort((a, b) => 
+        //         compareDesc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
+        //     );
+
+        // }
+        // else if(action.payload == 'newest'){
+
+        //     state.filteredFlights = state.filteredFlights.sort((a, b) => 
+        //         compareAsc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
+        //     );
+        // }
+        // else if(action.payload == 'highPrice'){
+
+        //     state.filteredFlights = state.filteredFlights.sort((a, b) => b.price - a.price);
+        // }
+        // else {
+
+        //     state.filteredFlights = state.filteredFlights.sort((a, b) => a.price - b.price);
+        // }
+        
     },
 
     _setArrivalTime : (state, action) => {
         state.arrivalTime = action.payload;
+
+        // if(action.payload == 'forenoon'){    // sabah
+        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.arrivalTime.includes('AM'));
+        // }
+        // else{
+        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.arrivalTime.includes('PM'));
+        // }
     },
 
     _setStops : (state, action) => {
+
         state.stops = action.payload;
+
+        // if(action.payload == 1){
+        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length == 1);
+        // }
+        // else if(action.payload == 2){
+        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length == 2);
+        // }
+        // else{
+        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length >= 3);
+        // }
+
     },
 
     _setAirline : (state, action) => {
@@ -116,6 +192,7 @@ const flights = createSlice({
 
     builder.addCase(_fetchFlights.rejected, (state,action)=>{
 
+       
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
@@ -123,16 +200,18 @@ const flights = createSlice({
     }),
     builder.addCase(_fetchFlights.pending, (state, action)=>{
 
+
         state.isLoading = true;
         state.isError = false;
         state.isSuccess = false;
+
+        
     }),
 
     builder.addCase(_fetchFlights.fulfilled, (state,action)=>{
 
-        console.log(action.payload);
-
-        state.flights = action.payload;
+        state.flights = action.payload.data;
+        state.filteredFlights = action.payload.data
 
         state.isSuccess = true;
         state.isLoading = false;
@@ -141,5 +220,5 @@ const flights = createSlice({
    
 }})
 
-export const { _setAirline, _setArrivalLocation, _setArrivalTime, _setDepartureLocation, _setEndDate, _setFlightDirection, _setFlights, _setSortBy, _setStartDate, _setStops  } = flights.actions
+export const { _setAirline, _setArrivalLocation, _setArrivalTime, _setDepartureLocation, _setEndDate, _setFlightDirection, _setFlights, _setSortBy, _setStartDate, _setStops, _setFilteredFlights  } = flights.actions
 export default flights.reducer

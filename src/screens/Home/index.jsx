@@ -21,11 +21,11 @@ const index = () => {
             <Navbar/>
             
             <div className='w-full h-full flex items-center justify-between mt-6'>
-                <div className='w-3/4 h-full'>
+                <div className='w-3/4 h-full overflow-scroll rounded-lg no-scrollbar'>
                     
                     <Search />
                     
-                    <div className='flex mt-7'>
+                    <div className='flex mt-7 h-full  '>
                         <div className='w-3/4 h-full'>
                             <Flights/>
                         </div>

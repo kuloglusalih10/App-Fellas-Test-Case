@@ -2,17 +2,58 @@ import React,{useState} from 'react'
 import {  Select, Field, Label, Radio, RadioGroup  } from '@headlessui/react';
 import clsx from 'clsx'
 import { FaCaretDown } from "react-icons/fa";
+import { setSortBy, setStops, setAirline, setArrivalTime, setFilteredFlights } from '../../../stores/flights/actions';
+import { useSortBy, useAirline, useArrivalTime, useStops, useFlights } from '../../../stores/flights/hooks';
+import { getFilter } from '../../../utils/getfilter';
+import { airlines } from '../../../utils/consts/airlines';
 
 const Filter = () => {
 
-    const [selecetArvl, setSelecetArvl] = useState(1);
-    const [selecetStops, setSelecetStops] = useState(1);
+    let sortBy = useSortBy();
+    let arrivalTime = useArrivalTime();
+    let stops = useStops();
+    let airline = useAirline();
+    let flights = useFlights();
+
+
+    const handleSortBy = (e) => {
+
+        setSortBy(e.target.value);
+        const filteredFlights = getFilter(e.target.value, arrivalTime, stops, airline, flights);
+        setFilteredFlights(filteredFlights);
+
+    }
+
+    const handleArrivalTime = (e) => {
+
+        setArrivalTime(e);
+        const filteredFlights = getFilter(sortBy, e, stops, airline, flights);
+        setFilteredFlights(filteredFlights);
+
+    }
+
+    const handleStops = (e) => {
+
+        setStops(e);
+        const filteredFlights = getFilter(sortBy, arrivalTime, e, airline, flights);
+        setFilteredFlights(filteredFlights);
+
+    }
+
+    const handleAirline = (e) => {
+
+        setAirline(e);
+        const filteredFlights = getFilter(sortBy, arrivalTime, stops, e, flights);
+        setFilteredFlights(filteredFlights);
+
+    }
     
     return (
 
         <div className='h-full'>
 
             <h2 className='roboto-medium text-sm'>Sort by:</h2>
+            
             <div className="relative">
                 <Select
                     className={clsx(
@@ -20,11 +61,14 @@ const Filter = () => {
                     'focus:outline-none data-[focus]:outline-2 data-[focus]:-outline-offset-2 data-[focus]:outline-white/25 ',
                     '*:text-black'
                     )}
+
+                    value={sortBy}
+                    onChange={ handleSortBy}
                 >
-                    <option value="active">Lowest Price</option>
-                    <option value="paused">Highest Price</option>
-                    <option value="delayed">New</option>
-                    <option value="canceled">Old</option>
+                    <option value="lowPrice">Lowest Price</option>
+                    <option value="highPrice">Highest Price</option>
+                    <option value="newest">Newest</option>
+                    <option value="oldest">Oldest</option>
                 </Select>
                 <FaCaretDown
                     className="group pointer-events-none absolute top-2.5 right-2.5 size-4 fill-dark-purple"
@@ -34,20 +78,20 @@ const Filter = () => {
             </div>
 
             <h2 className='roboto-medium text-sm mt-5 mb-4'>Arrival Time</h2>
-            <RadioGroup value={selecetArvl} onChange={setSelecetArvl} aria-label="Server size">
+            <RadioGroup value={arrivalTime} onChange={ handleArrivalTime} >
                 
-                <Field key={1} className="flex items-center gap-2 ">
+                <Field key={'forenoon'} className="flex items-center gap-2 ">
                     <Radio
-                        value={1}
+                        value='forenoon'
                         className="group flex size-3 items-center justify-center rounded-full border bg-white data-[checked]:bg-dark-purple cursor-pointer"
                     >
                         
                     </Radio>
                     <Label className="cursor-pointer select-none roboto-regular text-medium-gray text-sm">5:00 AM - 11:59 PM</Label>
                 </Field>
-                <Field key={2} className="flex items-center gap-2 mt-2 ">
+                <Field key={'afternoon'} className="flex items-center gap-2 mt-2 ">
                     <Radio
-                        value={2}
+                        value='afternoon'
                         className="group flex size-3 items-center justify-center rounded-full border bg-white data-[checked]:bg-dark-purple cursor-pointer"
                     >
 
@@ -56,8 +100,9 @@ const Filter = () => {
                 </Field>
                 
             </RadioGroup>
+
             <h2 className='roboto-medium text-sm mt-5 mb-4'>Stops</h2>
-            <RadioGroup value={selecetStops} onChange={setSelecetStops} aria-label="Server size">
+            <RadioGroup value={stops} onChange={handleStops} >
                 
                 <Field key={1} className="flex items-center gap-2 ">
                     <Radio
@@ -90,17 +135,26 @@ const Filter = () => {
             </RadioGroup>
 
             <h2 className='roboto-medium text-sm mt-5 mb-3'>Airlines Included</h2>
-            <RadioGroup value={selecetStops} onChange={setSelecetStops} aria-label="Server size">
+            <RadioGroup value={airline} onChange={handleAirline} >
+
+                {
+                    airlines.map((airline) => {
+                        return (
+
+                            <Field key={airline.iata} className="flex items-center gap-2 mb-2.5">
+                                <Radio
+                                    value={airline.iata}
+                                    className="group flex size-3 items-center justify-center rounded-full border bg-white data-[checked]:bg-dark-purple cursor-pointer"
+                                >
+                                    
+                                </Radio>
+                                <Label className="cursor-pointer select-none roboto-regular text-medium-gray text-sm w-full flex items-center justify-between">{airline.publicName} <span className='text-dark-gray'>$230</span></Label>
+                            </Field>
+
+                        )
+                    })
+                }
                 
-                <Field key={1} className="flex items-center gap-2 mb-2.5">
-                    <Radio
-                        value={1}
-                        className="group flex size-3 items-center justify-center rounded-full border bg-white data-[checked]:bg-dark-purple cursor-pointer"
-                    >
-                        
-                    </Radio>
-                    <Label className="cursor-pointer select-none roboto-regular text-medium-gray text-sm w-full flex items-center justify-between">Alitalia <span className='text-dark-gray'>$230</span></Label>
-                </Field>
                 
             </RadioGroup>
 
