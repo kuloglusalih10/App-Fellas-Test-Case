@@ -5,52 +5,79 @@ export const getFilter = (sortBy, arrivalTime, stops, airline, flights ) => {
 
 
     let newFilteredFlights = [...flights];
-    console.log('sort by : ', sortBy)
 
     // SortBy
 
-    if(sortBy === 'oldest'){
-
-        newFilteredFlights = newFilteredFlights.sort((a, b) => 
-            compareDesc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
-        );
-
+    switch (sortBy) {
+        case 'oldest':
+            newFilteredFlights = newFilteredFlights.sort((a, b) =>
+                compareDesc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
+            );
+            break;
+    
+        case 'newest':
+            newFilteredFlights = newFilteredFlights.sort((a, b) =>
+                compareAsc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
+            );
+            break;
+    
+        case 'highPrice':
+            newFilteredFlights = newFilteredFlights.sort((a, b) => b.price - a.price);
+            break;
+    
+        case 'lowPrice':
+            newFilteredFlights = newFilteredFlights.sort((a, b) => a.price - b.price);
+            break;
+    
+        default:
+            break;
     }
-    else if(sortBy === 'newest'){
-
-        newFilteredFlights = newFilteredFlights.sort((a, b) => 
-            compareAsc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
-        );
-    }
-    else if(sortBy === 'highPrice'){
-        
-        newFilteredFlights = newFilteredFlights.sort((a, b) => b.price - a.price);
-    }
-    else if (sortBy === 'lowPrice'){
-
-        newFilteredFlights = newFilteredFlights.sort((a, b) => a.price - b.price);
-    }
+    
 
 
     // Arrival Time
 
-    if(arrivalTime === 'forenoon'){    // sabah
-        newFilteredFlights = newFilteredFlights.filter(flight => flight.arrivalTime.includes('AM'));
-    }
-    else if(arrivalTime === 'afternoon'){
-        newFilteredFlights= newFilteredFlights.filter(flight => flight.arrivalTime.includes('PM'));
+
+    switch (arrivalTime) {
+        case 'forenoon':   // sabah
+            newFilteredFlights = newFilteredFlights.filter(flight => flight.arrivalTime.includes('AM'));
+            break;
+    
+        case 'afternoon':  // öğleden sonra
+            newFilteredFlights = newFilteredFlights.filter(flight => flight.arrivalTime.includes('PM'));
+            break;
+    
+        default:
+            break;
     }
 
     // Stops
 
-    if(stops === 1){
-        newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length == 1);
+    switch (stops) {
+        case 1:
+            newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length === 1);
+            break;
+    
+        case 2:
+            newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length === 2);
+            break;
+    
+        case 3:
+            newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length >= 3);
+            break;
+    
+        default:
+            break;
     }
-    else if(stops === 2){
-        newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length == 2);
-    }
-    else if(stops === 3){
-        newFilteredFlights = newFilteredFlights.filter(flight => flight.route.destinations.length >= 3);
+    
+
+    // Airline
+
+    console.log('Ariline : ', airline);
+
+    if(airline != ''){
+
+        newFilteredFlights = newFilteredFlights.filter(flight => flight.prefixIATA == airline);
     }
 
     return newFilteredFlights

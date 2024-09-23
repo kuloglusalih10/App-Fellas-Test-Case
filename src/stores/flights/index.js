@@ -1,6 +1,5 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
-import { compareAsc, parseISO, compareDesc } from "date-fns";
 import { formatDuration } from "../../utils/formatDuration";
 import { calculatePrice } from "../../utils/calculatePrice";
 import { formatTimes } from "../../utils/formatTimes";
@@ -10,52 +9,64 @@ import { formatTimes } from "../../utils/formatTimes";
 export const _fetchFlights = createAsyncThunk(
     'flights/_fetchFlights',
 
-    async (_, {rejectWithValue}) => {
+    async (data, thunkApi) => {
+
+        console.log(thunkApi.getState().flights);
+
+        const {flightDirection, departureLocation, arrivalLocation , startDate, endDate} = thunkApi.getState().flights
 
         try{
             var options = {
                 "method": "GET",
-                "url": "http://localhost:3000/api/flights",
+                "url": new URL(`http://localhost:3000/api/flights?flightDirection=${flightDirection}&departureLocation=${departureLocation}&arrivalLocation=${arrivalLocation}&startDate=${startDate}&endDate=${endDate}`),
                 "headers": {
                     'Accept': 'application/json',
                 }
               };
             
             const response  = await axios.request(options);
+
+            console.log(response);
             
             if(response.data.res){
 
-                response.data.data.map((flight)=>{
+                if(response.data.data){    // Verinin boş olup olmadığını kontrol ettik , uçuş yoksa boş gelebilir
 
-                    // Uçuş süresini hesaplama
+                    response.data.data.map((flight)=>{
+    
+                        // Uçuş süresini hesaplama
+    
+                        const formattedDuration = formatDuration(flight);
+                        flight['duration']= formattedDuration;
+    
+                        // Fiyat değerini hesaplama
+    
+                        const price = calculatePrice(formattedDuration);
+                        flight['price']= price;
+    
+                        // Kalkış ve iniş zamanlarını hesaplama
+    
+                        const formattedTimes = formatTimes(flight);
+                        flight['arrivalTime']= formattedTimes.arrivalTime;
+                        flight['departureTime']= formattedTimes.departureTime;
+    
+    
+                    })
+    
+                    return response.data.data
+                }
+                else{
 
-                    const formattedDuration = formatDuration(flight);
-                    flight['duration']= formattedDuration;
+                    return [];
+                }
 
-                    // Fiyat değerini hesaplama
-
-                    const price = calculatePrice(formattedDuration);
-                    flight['price']= price;
-                    
-
-
-                    // Kalkış ve iniş zamanlarını hesaplama
-
-                    const formattedTimes = formatTimes(flight);
-                    flight['arrivalTime']= formattedTimes.arrivalTime;
-                    flight['departureTime']= formattedTimes.departureTime;
-
-
-                })
-
-                return response.data
             }
             else{
-                return rejectWithValue('reject hata');
+                return thunkApi.rejectWithValue('reject hata');
             } 
         }
         catch(error){
-            return rejectWithValue(error);
+            return thunkApi.rejectWithValue(error);
         }
     }
 )
@@ -78,21 +89,22 @@ const initialState = {
   'flightDirection' : 'D',
   'startDate' : '',   // Default olarak bir günlük uçuşlar listelenecek
   'endDate' : '',
-  'departureLocation' : '',
-  'arrivalLocation' : '',
+  'departureLocation' : 'IST',
+  'arrivalLocation' : 'AMS',
 
 
   // Filter
 
-  'sortBy' : '',
+  'sortBy' : 'newest',
   'arrivalTime' : '',          // forenoon : öğleden önce  afternoon: öğleden sonra
   'stops' : -1,
-  'airline' : 'Alitalia'  // Airline kodu gelecek
+  'airline' : ''  // Airline kodu gelecek
 
 }
 
 
 const flights = createSlice({
+
   name: 'flights',
   initialState,
   reducers: {
@@ -123,67 +135,30 @@ const flights = createSlice({
     },
 
     _setArrivalLocation : (state, action) => {
-        state.departureLocation = action.payload;
-        
+        state.arrivalLocation = action.payload;
     },
 
     _setSortBy : (state, action) => {
-        
-        state.sortBy = action.payload;
-
-        // if(action.payload == 'oldest'){
-
-        //     state.filteredFlights = state.filteredFlights.sort((a, b) => 
-        //         compareDesc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
-        //     );
-
-        // }
-        // else if(action.payload == 'newest'){
-
-        //     state.filteredFlights = state.filteredFlights.sort((a, b) => 
-        //         compareAsc(parseISO(a.scheduleDateTime), parseISO(b.scheduleDateTime))
-        //     );
-        // }
-        // else if(action.payload == 'highPrice'){
-
-        //     state.filteredFlights = state.filteredFlights.sort((a, b) => b.price - a.price);
-        // }
-        // else {
-
-        //     state.filteredFlights = state.filteredFlights.sort((a, b) => a.price - b.price);
-        // }
-        
+        state.sortBy = action.payload
     },
 
     _setArrivalTime : (state, action) => {
-        state.arrivalTime = action.payload;
 
-        // if(action.payload == 'forenoon'){    // sabah
-        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.arrivalTime.includes('AM'));
-        // }
-        // else{
-        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.arrivalTime.includes('PM'));
-        // }
+        state.arrivalTime = action.payload
+
     },
 
     _setStops : (state, action) => {
 
-        state.stops = action.payload;
+        state.stops = action.payload 
 
-        // if(action.payload == 1){
-        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length == 1);
-        // }
-        // else if(action.payload == 2){
-        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length == 2);
-        // }
-        // else{
-        //     state.filteredFlights = state.filteredFlights.filter(flight => flight.route.destinations.length >= 3);
-        // }
 
     },
 
     _setAirline : (state, action) => {
-        state.airline = action.payload;
+
+        state.airline = action.payload 
+
     },
 
     
@@ -210,8 +185,8 @@ const flights = createSlice({
 
     builder.addCase(_fetchFlights.fulfilled, (state,action)=>{
 
-        state.flights = action.payload.data;
-        state.filteredFlights = action.payload.data
+        state.flights = action.payload;
+        state.filteredFlights = action.payload
 
         state.isSuccess = true;
         state.isLoading = false;

@@ -1,5 +1,4 @@
 import {  intervalToDuration, parseISO } from 'date-fns';
-import { DateTime } from 'luxon';
 
 
 export const formatDuration = (flight) => {
@@ -16,7 +15,6 @@ export const formatDuration = (flight) => {
     const formattedDuration = `${duration.hours ? duration.hours + 'h ' : ''}${
         duration.minutes ? duration.minutes + 'm ' : ''
         }${duration.seconds ? duration.seconds + 's' : ''}`;
-
 
     return formattedDuration
     

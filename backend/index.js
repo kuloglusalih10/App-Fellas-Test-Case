@@ -6,25 +6,23 @@ require('dotenv').config();
 
 // mongo DB
 
-// const mongoose = require('mongoose')
-// const connectionString = process.env.MONGO_URL
+const mongoose = require('mongoose')
+const connectionString = process.env.MONGO_URL
 
 // Routes
 
-const flightsRouter = require("./routes/FlightsRoutes");
+const flightsRouter = require("./routes/flightsRoutes");
+const booksRouter = require("./routes/bookRoutes")
 
 const app = express();
 
 
 // Swagger
 
-// const swaggerUi = require('swagger-ui-express');
-// const swaggerDocument = require('./swagger-output.json');
+const swaggerUi = require('swagger-ui-express');
+const swaggerDocument = require('./swagger-output.json');
 
-// app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
-
-
-
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
 
 
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -33,12 +31,12 @@ app.use(cors())
 
 
 app.use("/api/flights", flightsRouter);
+app.use("/api/books", booksRouter)
 
 
 app.get("/", (req, res)=>{
     res.send("Hello World");
 })
-
 
 app.use("*", (req,res)=> {
     res.send("404 Not Found")
@@ -49,10 +47,10 @@ app.use("*", (req,res)=> {
 
 // Connect
 
-// mongoose.connect(connectionString).then((result)=>{
+mongoose.connect(connectionString).then((result)=>{
 
     app.listen(3000, ()=>{
         console.log('server çalışıyor')
     });
 
-// }).catch(err => console.log(err));
+}).catch(err => console.log(err));

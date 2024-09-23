@@ -6,7 +6,7 @@ import user from "../../../assets/user2.png"
 
 const Navbar = () => {
   return (
-    <div className='flex items-center w-full justify-between'>
+    <header id='header' className='flex items-center w-full justify-between absolute left-0 top-0 right-0 z-50 px-52 py-4 pt-6'>
         <div className='flex items-center gap-x-4 '>
             <span className='rounded-full bg-dark-purple'><IoAirplane color='#fff' size={32} /></span> <span className='roboto-bold text-xl text-dark-gray select-none'>PLANE SCAPE</span>
         </div>
@@ -31,7 +31,7 @@ const Navbar = () => {
                 </div>
             </div>
         </div>
-    </div>
+    </header>
   )
 }
 

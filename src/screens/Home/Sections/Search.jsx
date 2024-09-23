@@ -5,54 +5,93 @@ import { BiSolidPlaneTakeOff,BiSolidPlaneLand } from "react-icons/bi";
 import { IoMdCalendar } from "react-icons/io";
 import DatePicker from "react-datepicker";
 import clsx from 'clsx';
+import { destinations } from '../../../utils/consts/destinations';
+import { useStartDate, useEndDate, useFlightDirection, useArrivalLocation, useDepartureLocation } from '../../../stores/flights/hooks';
+import { setStartDate, setEndDate, setFlightDirection, setArrivalLocation, setDepartureLocation, fetchFlights } from '../../../stores/flights/actions';
+import {format, differenceInDays, parse} from "date-fns"
 
 import "react-datepicker/dist/react-datepicker.css";
+import { toast } from 'react-toastify';
 
 const Search = () => {
 
 
-    const [startDate, setStartDate] = useState(new Date());
-    const [endDate, setEndDate] = useState(new Date());
-    const [selectedDirection, setSelectedDirection] = useState('arrival')
+    const departureLocation = useDepartureLocation();
+    const arrivalLocation = useArrivalLocation();
 
+    const startDate = useStartDate();
+    const endDate = useEndDate();
+
+    const flightDirection = useFlightDirection();
     
-    const destinations = [
-        { id: 1, name: 'Durward Reynolds' },
-        { id: 2, name: 'Kenton Towne' },
-        { id: 3, name: 'Therese Wunsch' },
-        { id: 4, name: 'Benedict Kessler' },
-        { id: 5, name: 'Katelyn Rohan' },
-      ]
+    const handleSetDirection = (direction) => {
 
-    const handleDirection = (direction) => {
-
-        
-        setSelectedDirection(direction);
-        
-        if(direction == 'arrival') {
-
-            setDeparture('Amsterdam');
-            setArrival(destinations[0].name)
-            
-        }
-        else {
-            setArrival('Amsterdam');
-            setDeparture(destinations[0].name)    
-        }
-       
+        setFlightDirection(direction);
+        setArrivalLocation(departureLocation);
+        setDepartureLocation(arrivalLocation);
     }
 
-    
+    const handleSetStartDate = (date) => {
+        
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        setStartDate(formattedDate);
+    }
+
+    const handleSetEndDate = (date) => {
+
+        const formattedDate = format(date, 'yyyy-MM-dd');
+        setEndDate(formattedDate);
+    }
+
+    // const handleSearch = () => {
+
+    //     const fromDate = startDate  == '' ? format(new Date(), 'yyyy-MM-dd') : parse(startDate, 'yyyy-MM-dd', new Date());
+    //     const toDate = endDate == '' ? format(new Date(), 'yyyy-MM-dd') : parse(endDate, 'yyyy-MM-dd', new Date());
+
+    //     const differenceDays = differenceInDays(fromDate, toDate);
+
+    //     console.log(fromDate, endDate);
+    //     console.log(differenceDays);
+
+    //     if(differenceDays > 3){
+    //         toast('En fazla 3 gün aralığı seçilebilir',{type : 'error'})
+    //     }
+    //     else if(differenceDays < 0){
+    //         toast('Bitiş tarihi başlangıçtan önce olamaz',{type : 'error'})
+    //     }
+    //     else{
+
+    //         fetchFlights();
+
+    //     }
+    // }
 
     const handleSearch = () => {
-        console.log("Departure : ", departure, " Arrival : " , arrival);
+
+        const fromDate = startDate === '' ? new Date() : parse(startDate, 'yyyy-MM-dd', new Date());
+        const toDate = endDate === '' ? new Date() : parse(endDate, 'yyyy-MM-dd', new Date());
+    
+        const differenceDays = differenceInDays(toDate, fromDate);
+    
+        console.log(fromDate, toDate);
+        console.log(differenceDays);
+    
+        if (differenceDays > 3) {
+
+            toast('En fazla 3 gün aralığı seçilebilir', { type: 'error' });
+
+        } else if (differenceDays < 0) {
+
+            toast('Bitiş tarihi başlangıçtan önce olamaz', { type: 'error', style:{fontSize: 14} });
+
+        } else {
+
+            fetchFlights();
+        }
     }
-   
 
-    const [departure, setDeparture] = useState(selectedDirection == 'arrival' ? 'Amsterdam' : destinations[0].name);
-    const [arrival, setArrival] = useState(selectedDirection == 'departure' ? 'Amsterdam' : destinations[0].name);
+    return (
 
-  return (
         <div className='w-full px-4 py-6 border bg-white rounded-lg'> 
 
             <div className='w-full  flex items-center justify-between'>
@@ -65,23 +104,23 @@ const Search = () => {
                             classNames(
                             'w-full border rounded-l-full flex items-center justify-center py-2 text-sm font-medium leading-5 roboto-regular duration-200 transition-colors',
                             '  focus:outline-none ',
-                            selectedDirection == 'departure'
+                            flightDirection == 'D'
                                 ? ' bg-dark-purple text-white border-dark-purple '
                                 : 'text-dark-purple bg-ligth-purple border-ligth-purple'
                             )
                             
-                        } onClick={()=> handleDirection('departure')}>
+                        } onClick={() => handleSetDirection('D')}>
                             Departure
                         </div>
                         <div className={
                             classNames(
                             'w-full border rounded-r-full flex items-center justify-center py-2.5 text-sm font-medium leading-5 roboto-regular duration-200 transition-colors',
                             '   focus:outline-none ',
-                            selectedDirection == 'arrival'
+                            flightDirection == 'A'
                                 ? 'bg-dark-purple text-white border-dark-purple'
                                 : 'text-dark-purple  bg-ligth-purple border-ligth-purple'
                             )
-                        } onClick={()=> handleDirection('arrival')}>
+                        } onClick={()=> handleSetDirection('A')}>
                         Arrival
                         </div>
                     </div>
@@ -94,33 +133,36 @@ const Search = () => {
                     <div className='w-1/2'>
                         <div >
 
-                            <div className='flex items-center w-full ' >
-                                <span className={classNames('border-y-2 border-l-2 rounded-l-xl  border-ligth-gray/40 py-1.5 pl-3 h-full', {'bg-ligth-gray/10 border-black/30 cursor-not-allowed': selectedDirection == 'arrival'})}>
+                            <div className='flex items-center w-full' >
+                                
+                                <span className={classNames('border-y-2 border-l-2 rounded-l-xl  border-ligth-gray/40 py-1.5 pl-3 h-full cursor-pointer', {'bg-ligth-gray/5 border-black/30 cursor-not-allowed': flightDirection == 'A'})}>
                                     <BiSolidPlaneTakeOff color='#4B0097' size={24}/>
                                 </span>
                                 <select
 
                                     className={clsx(
-                                        'w-full  border-y-2 border-r-2 border-ligth-gray/40 rounded-r-[2px] bg-white/5 py-[6px] pr-8 pl-3 text-sm/6 text-dark-purple outline-none',{' border-black/30 cursor-not-allowed bg-ligth-gray/10': selectedDirection == 'arrival'}
+                                        'w-full  border-y-2 border-r-2 border-ligth-gray/40 rounded-r-[2px] bg-white/5 py-[6px] pr-8 pl-3 text-sm/6 text-dark-purple outline-none cursor-pointer',{' border-black/30 cursor-not-allowed bg-ligth-gray/5': flightDirection == 'A'}
                                     )}
-                                    name='departure'
-                                    value={departure}
-                                    onChange={ () => setDeparture(event.target.value)}
+
+                                    value={departureLocation}
+                                    
+                                    onChange={ (e) => setDepartureLocation(e.target.value)}
                                     
                                 >
 
                                     {
-                                        selectedDirection == 'arrival' ? 
+                                        flightDirection == 'A' ? 
 
-                                            <option disabled  value={'Amsterdam'} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
+                                            <option disabled  value={departureLocation} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
                                                 Amsterdam
                                             </option>
 
                                         :
                                     
-                                        destinations.map((city) => (
-                                            <option key={city.id} value={city.name} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
-                                                {city.name}
+                                        destinations.map((city, index) => (
+                                           
+                                            <option key={city.iata} value={city.iata} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
+                                                {city.city}
                                             </option>
                                         ))
                                     
@@ -134,31 +176,32 @@ const Search = () => {
                     <div className='w-1/2'>
                         <div >
                             <div className='flex items-center w-full' >
-                                <span className={classNames('border-y-2 border-l-2 rounded-l-[2px]  border-ligth-gray/40 py-1.5 pl-3 h-full',{'bg-ligth-gray/10 border-black/30 cursor-not-allowed': selectedDirection == 'departure'})}>
+                                <span className={classNames('border-y-2 border-l-2 rounded-l-[2px]  border-ligth-gray/40 py-1.5 pl-3 h-full cursor-pointer',{'bg-ligth-gray/5 border-black/30 cursor-not-allowed': flightDirection == 'D'})}>
                                     <BiSolidPlaneLand color='#4B0097' size={24}/>
                                 </span>
                                 <select
                                     className={clsx(
-                                        'w-full  border-y-2 border-r-2 border-ligth-gray/40 rounded-r-xl bg-white/5 py-[6px] pr-8 pl-3 text-sm/6 text-dark-purple outline-none',{'bg-ligth-gray/10 border-black/30 cursor-not-allowed': selectedDirection == 'departure'}
+                                        'w-full  border-y-2 border-r-2 border-ligth-gray/40 rounded-r-xl bg-white/5 py-[6px] pr-8 pl-3 text-sm/6 text-dark-purple outline-none cursor-pointer',{'bg-ligth-gray/5 border-black/30 cursor-not-allowed': flightDirection == 'D'}
                                     )}
                                     name='arrival'
-                                    value={arrival}
-                                    onChange={ ()=> setArrival(event.target.value)}
+                                    value={arrivalLocation}
+                                    onChange={ (e) => setArrivalLocation(e.target.value)}
                                         
                                 >
 
                                     {
-                                        selectedDirection == 'departure' ? 
+                                        flightDirection == 'D' ? 
 
-                                            <option disabled  value={'Amsterdam'} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
+                                            <option disabled   value={'AMS'} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
                                                 Amsterdam
                                             </option>
 
                                         :
                                     
-                                        destinations.map((city) => (
-                                            <option key={city.id} value={city.name} className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
-                                                {city.name}
+                                        destinations.map((city,index) => (
+                                           
+                                            <option  key={city.iata} value={city.iata } className="data-[focus]:bg-blue-100 p-2 cursor-pointer w-full rounded-md">
+                                                {city.city}
                                             </option>
                                         ))
                                     
@@ -180,7 +223,7 @@ const Search = () => {
                                     <IoMdCalendar color='#4B0097' size={24}/>
                                 </span>
 
-                                <DatePicker selected={startDate} onChange={(date) => setStartDate(date)} className='outline-none border-y-2 border-r-2 border-ligth-gray/40 rounded-r-[2px] py-1.5 pl-3'/>
+                                <DatePicker selected={startDate} onChange={handleSetStartDate} className='outline-none border-y-2 border-r-2 border-ligth-gray/40 rounded-r-[2px] py-1.5 pl-3'/>
                                 
                             </div>
                     </div>
@@ -189,7 +232,7 @@ const Search = () => {
                             <span className='border-y-2 border-l-2 rounded-l-[2px]  border-ligth-gray/40 py-1.5 pl-3 h-full'>
                                 <IoMdCalendar color='#4B0097' size={24}/>
                             </span>
-                            <DatePicker selected={endDate} onChange={(date) => setEndDate(date)} className='outline-none border-y-2 border-r-2 border-ligth-gray/40 rounded-r-xl py-1.5 pl-3'/>
+                            <DatePicker selected={endDate} onChange={handleSetEndDate} className='outline-none border-y-2 border-r-2 border-ligth-gray/40 rounded-r-xl py-1.5 pl-3'/>
                         </div>
                     </div>
                 </div>
@@ -201,7 +244,7 @@ const Search = () => {
             </div>
 
         </div>
-  )
+    )
 }
 
 export default Search

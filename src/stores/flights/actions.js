@@ -11,7 +11,5 @@ export const setFlights = data => store.dispatch(_setFlights(data));
 export const setSortBy = data => store.dispatch(_setSortBy(data));
 export const setStartDate = data => store.dispatch(_setStartDate(data));
 export const setStops = data => store.dispatch(_setStops(data));
-export const fetchFlights = data => store.dispatch(_fetchFlights());
+export const fetchFlights = data => store.dispatch(_fetchFlights(data));
 export const setFilteredFlights = data => store.dispatch(_setFilteredFlights(data));
-
-

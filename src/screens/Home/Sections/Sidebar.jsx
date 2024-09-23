@@ -9,7 +9,7 @@ import slide_3_umbrella from "../../../assets/slide_3_umbrella.png"
 const Sidebar = () => {
   return (
     <div className='w-full'>
-         <div className='rounded-lg w-full h-[260px] relative overflow-hidden'>
+         <div className='rounded-lg w-full h-[260px] relative overflow-hidden animate-in slide-in-from-right duration-300'>
             <img src={slide_1} alt="Car Rentals" className='rounded-xl object-cover  w-full h-full cursor-pointer hover:scale-110 duration-700 transition-transform' />
             <div className='absolute inset-0  rounded-xl bg-gradient-to-br from-transparent to-dark-orange/50  flex items-start justify-end flex-col pl-6 pb-6 pointer-events-none' >
 
@@ -17,7 +17,7 @@ const Sidebar = () => {
                 <h3 className='text-white roboto-bold text-xl '>CAR RENTALS</h3>
             </div>
         </div>
-        <div className='rounded-lg w-full h-[260px] relative overflow-hidden mt-5'>
+        <div className='rounded-lg w-full h-[260px] relative overflow-hidden mt-5 animate-in slide-in-from-right duration-500'>
             <img src={slide_2} alt="Car Rentals" className='rounded-xl object-cover w-full h-full cursor-pointer hover:scale-110 duration-700 transition-transform' />
             <div className='absolute inset-0  rounded-xl flex items-start justify-end bg-gradient-to-b from-transparent to-black/40 flex-col pb-6 pointer-events-none' >
 
@@ -25,7 +25,7 @@ const Sidebar = () => {
                 <h3 className='text-white roboto-bold text-xl pl-6'>HOTELS</h3>
             </div>
         </div>
-        <div className='rounded-lg w-full h-[260px] relative overflow-hidden  mt-5'>
+        <div className='rounded-lg w-full h-[260px] relative overflow-hidden  mt-5 animate-in slide-in-from-right duration-700'>
             <img src={slide_3} alt="Car Rentals" className='rounded-xl object-cover w-full h-full cursor-pointer  hover:scale-110 duration-700 transition-transform' />
             <div className='absolute inset-0  rounded-xl bg-gradient-to-b from-transparent to-black/60  flex items-start justify-end flex-col  pb-6 pointer-events-none' >
 

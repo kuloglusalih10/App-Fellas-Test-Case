@@ -1,10 +1,11 @@
-import React from 'react'
+import React,{useEffect} from 'react'
 import { LuPlaneTakeoff,LuPlaneLanding } from "react-icons/lu";
 import { IoAirplane } from "react-icons/io5";
 import { useFlights, useIsError, useIsLoading ,useIsSuccess,useFilteredFlights } from '../../../stores/flights/hooks';
 import {airlines_logo} from "../../../utils/consts/airlines_logo"
 import { airports } from "@nwpr/airport-codes";
 import { useAutoAnimate } from '@formkit/auto-animate/react'
+import { fetchFlights } from '../../../stores/flights/actions';
 
 const Flights = () => {
 
@@ -13,6 +14,10 @@ const Flights = () => {
     const isError =  useIsError();
     const isSuccess = useIsSuccess();
     const isLoading = useIsLoading();
+
+    useEffect(()=>{
+        fetchFlights();
+    },[])
 
 
 
@@ -74,7 +79,7 @@ const Flights = () => {
                                                             <img className='object-cover ' src={airlines_logo.get(flight.prefixIATA)} alt="airlines logo" />
                                                         </div>
                                                         <IoAirplane color='#4B0097'  size={21} className='mb-1.5'/>
-                                                        <p className='roboto-regular text-sm  text-medium-gray '>
+                                                        <p className='roboto-regular text-sm text-[13px] text-medium-gray '>
                                                             {flight.duration} ({flight.route.destinations.length == 1 ? ' Nonstop ' : ` ${flight.route.destinations.length-1} stops `})
                                                         </p>         
                                                     </div>
@@ -123,7 +128,7 @@ const Flights = () => {
                 }
 
                
-
+            <div className='h-[70px]'/>
                 
             </div>
     )
