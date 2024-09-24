@@ -4,7 +4,12 @@ import ReactStars from 'react-stars'
 
 const Navbar = () => {
 
+    // Tab başlıkları
+
     const tabs = ['Times', 'Stops', 'Airlines', 'Airports', 'Amenities'];
+
+
+    // Yıldız oluşturma fonksiyonu
 
     const getStar = (count) => {
 

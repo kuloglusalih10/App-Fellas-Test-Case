@@ -11,8 +11,6 @@ export const _fetchFlights = createAsyncThunk(
 
     async (data, thunkApi) => {
 
-        console.log(thunkApi.getState().flights);
-
         const {flightDirection, departureLocation, arrivalLocation , startDate, endDate} = thunkApi.getState().flights
 
         try{
@@ -25,8 +23,6 @@ export const _fetchFlights = createAsyncThunk(
               };
             
             const response  = await axios.request(options);
-
-            console.log(response);
             
             if(response.data.res){
 
@@ -165,7 +161,7 @@ const flights = createSlice({
   },
   extraReducers: (builder)=>{
 
-    builder.addCase(_fetchFlights.rejected, (state,action)=>{
+    builder.addCase(_fetchFlights.rejected, (state,action)=>{  // istek başarısız olursa
 
         toast('Bağlantı hatası', {type: 'error'})
         state.isLoading = false;
@@ -173,7 +169,7 @@ const flights = createSlice({
         state.isSuccess = false;
         // sadece satus değeri ile yönetilebilir
     }),
-    builder.addCase(_fetchFlights.pending, (state, action)=>{
+    builder.addCase(_fetchFlights.pending, (state, action)=>{   // isteğin işlendiği süreç
 
 
         state.isLoading = true;
@@ -182,7 +178,7 @@ const flights = createSlice({
         
     }),
 
-    builder.addCase(_fetchFlights.fulfilled, (state,action)=>{
+    builder.addCase(_fetchFlights.fulfilled, (state,action)=>{   // istek olumlu sonuçlandıysa
 
         state.flights = action.payload;
         state.filteredFlights = action.payload

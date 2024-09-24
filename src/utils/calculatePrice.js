@@ -6,7 +6,7 @@ export const calculatePrice = (time) => {
     let minutes = 0;
     let seconds = 0;
 
-    const timeRegex = /(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)s)?/;
+    const timeRegex = /(?:(\d+)h)?\s*(?:(\d+)m)?\s*(?:(\d+)s)?/;  // değer kontrolü
     const match = time.match(timeRegex);
   
     if (match) {
@@ -18,6 +18,8 @@ export const calculatePrice = (time) => {
         return 0
     }
 
+    // toplam süreyi saniye cinsine çevirerek fiyatı belirliyoruz
+    
     const totalSeconds = (hours * 3600) + (minutes * 60) + seconds;
 
     return totalSeconds;

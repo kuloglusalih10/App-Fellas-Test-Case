@@ -1,6 +1,9 @@
 import store from "..";
 import {_setAirline, _setArrivalLocation, _setArrivalTime, _setDepartureLocation, _setEndDate, _setFlightDirection, _setFlights, _setSortBy, _setStartDate, _setStops ,_fetchFlights, _setFilteredFlights} from ".";
 
+
+// Her sayfada dispatch etmemek için tek sayfadan yapıyoruz
+
 export const setAirline = data => store.dispatch(_setAirline(data));
 export const setArrivalLocation = data => store.dispatch(_setArrivalLocation(data));
 export const setArrivalTime = data => store.dispatch(_setArrivalTime(data));

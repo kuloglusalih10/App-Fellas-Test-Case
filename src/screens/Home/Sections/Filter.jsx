@@ -16,6 +16,8 @@ const Filter = () => {
     let flights = useFlights();
 
 
+    // sıralama seçeneğinin değişmesi
+
     const handleSortBy = (e) => {
 
         setSortBy(e.target.value);
@@ -24,6 +26,7 @@ const Filter = () => {
 
     }
 
+    // Varış saatinin filtrelenmesi
     const handleArrivalTime = (e) => {
 
         setArrivalTime(e);
@@ -31,6 +34,7 @@ const Filter = () => {
         setFilteredFlights(filteredFlights);
 
     }
+    // stops değerinin filtrelenmesi
 
     const handleStops = (e) => {
 
@@ -39,6 +43,8 @@ const Filter = () => {
         setFilteredFlights(filteredFlights);
 
     }
+
+    // airline değerinin filtrelenmesi
 
     const handleAirline = (e) => {
 

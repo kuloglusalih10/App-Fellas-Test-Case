@@ -1,6 +1,7 @@
 import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
 import axios from "axios";
 import { toast } from "react-toastify";
+import { useNavigate } from 'react-router';
 
 
 
@@ -56,16 +57,13 @@ export const _addBook = createAsyncThunk(
             
             const response  = await axios.request(options);
        
-            console.log('response : ', response);
-
             if(response.data.res){
 
                 if(response.data.data){    // Verinin boş olup olmadığını kontrol ettik , uçuş yoksa boş gelebilir
-    
+
                     return response.data.data
                 }
                 else{
-
                     return [];
                 }
 

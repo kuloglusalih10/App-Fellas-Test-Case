@@ -8,6 +8,9 @@ import Sidebar from './Sections/Sidebar';
 
 const index = () => {
 
+
+    // Sayfa scroll edildiğinde navbarın blurlanması
+    
     useEffect(()=> {
         function onScroll() {
             const l = document.getElementById("header");

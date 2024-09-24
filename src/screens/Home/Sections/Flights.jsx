@@ -38,22 +38,27 @@ const Flights = () => {
     let [isOpen, setIsOpen] = useState(false);
 
 
-    const handleAddBook = () => {
+    // rezervasyonun onaylanması
+
+    const handleAddBook = async () => {
         
         if(isAfter(new Date(), parseISO(selectedScheduleDate))){
             toast('Geçmiş uçuşa rezervasyon yapılamaz', {type: 'error', style:{fontSize: 12}});
         }
         else{
-            addBook(selectedFlight);
+            await addBook(selectedFlight);
             navigation('/books')
         }
         setIsOpen(false);
     }
 
+
     const handleDialogClose = () => {
         isBookLoading ? '' : setIsOpen(false)
     }
 
+    // Uçuşun seçilmesi
+    
     const handleBook = (book, scheduleDate) => {
 
         setSelectedScheduleDate(scheduleDate);

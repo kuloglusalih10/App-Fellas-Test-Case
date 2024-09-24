@@ -9,6 +9,7 @@ import error from "../../../assets/404.json"
 
 const Books = () => {
 
+    
     useEffect(()=> {
         fetchBooks();
     },[]);
@@ -25,7 +26,7 @@ const Books = () => {
         <div ref={bookanimate}>
             {
 
-                isBookLoading ?
+                isBookLoading ?  // Çekme işlemi devam ediyorsa
 
                     <div className='w-full h-full flex items-start justify-center mt-8'>
                         <Lottie options={{animationData: spinner, loop: true, autoplay: true}}
@@ -39,7 +40,7 @@ const Books = () => {
                     :
 
 
-                    isBookError ?
+                    isBookError ?  // Hata alındıysa
 
                             <div className='w-full h-full flex items-start justify-center mt-8'>
                                 <Lottie options={{animationData: error, loop: true, autoplay: true}}

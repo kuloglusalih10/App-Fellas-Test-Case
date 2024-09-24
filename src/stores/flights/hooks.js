@@ -1,5 +1,8 @@
 import { useSelector } from "react-redux";
 
+
+// Her sayfada sürekli useSelector çağırmamak için tek sayfadan yapıyoruz
+
 export const useFlights = () => useSelector(state => state.flights.flights);
 export const useIsLoading= () => useSelector(state => state.flights.isLoading);
 export const useIsSuccess = () => useSelector(state => state.flights.isSuccess);

@@ -18,12 +18,12 @@ const Search = () => {
 
     const departureLocation = useDepartureLocation();
     const arrivalLocation = useArrivalLocation();
-
     const startDate = useStartDate();
     const endDate = useEndDate();
-
     const flightDirection = useFlightDirection();
     
+    // seyahat yönünün değiştirlmesi
+
     const handleSetDirection = (direction) => {
 
         setFlightDirection(direction);
@@ -31,11 +31,15 @@ const Search = () => {
         setDepartureLocation(arrivalLocation);
     }
 
+    // başlangıç tarihinin değitirlmesi
+
     const handleSetStartDate = (date) => {
         
         const formattedDate = format(date, 'yyyy-MM-dd');
         setStartDate(formattedDate);
     }
+
+    // bitiş tarihinin değitirlmesi
 
     const handleSetEndDate = (date) => {
 
@@ -43,38 +47,15 @@ const Search = () => {
         setEndDate(formattedDate);
     }
 
-    // const handleSearch = () => {
-
-    //     const fromDate = startDate  == '' ? format(new Date(), 'yyyy-MM-dd') : parse(startDate, 'yyyy-MM-dd', new Date());
-    //     const toDate = endDate == '' ? format(new Date(), 'yyyy-MM-dd') : parse(endDate, 'yyyy-MM-dd', new Date());
-
-    //     const differenceDays = differenceInDays(fromDate, toDate);
-
-    //     console.log(fromDate, endDate);
-    //     console.log(differenceDays);
-
-    //     if(differenceDays > 3){
-    //         toast('En fazla 3 gün aralığı seçilebilir',{type : 'error'})
-    //     }
-    //     else if(differenceDays < 0){
-    //         toast('Bitiş tarihi başlangıçtan önce olamaz',{type : 'error'})
-    //     }
-    //     else{
-
-    //         fetchFlights();
-
-    //     }
-    // }
+    // Arama eventin
 
     const handleSearch = () => {
 
-        const fromDate = startDate === '' ? new Date() : parse(startDate, 'yyyy-MM-dd', new Date());
+        const fromDate = startDate === '' ? new Date() : parse(startDate, 'yyyy-MM-dd', new Date());  // diffrenceInDays içi tarihlerin formatlanması
         const toDate = endDate === '' ? new Date() : parse(endDate, 'yyyy-MM-dd', new Date());
     
         const differenceDays = differenceInDays(toDate, fromDate);
-    
-        console.log(fromDate, toDate);
-        console.log(differenceDays);
+
     
         if (differenceDays > 3) {
 
