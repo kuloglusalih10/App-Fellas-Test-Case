@@ -8,7 +8,7 @@ const addNewBook = async (req, res) => {
     try {
 
         const book = req.body;
-        const {error} = addBookValidation.validate(book);
+        const {error} = addBookValidation.validate(book);  // parametre validasyon
 
         if(error){
             return res.json({
@@ -20,7 +20,7 @@ const addNewBook = async (req, res) => {
 
         const {id} = req.body;
 
-        const findBook = await Book.findOne({ id: id });
+        const findBook = await Book.findOne({ id: id });  // Eğer zaten kayıtlıysa
 
         if(findBook){
 
@@ -60,7 +60,7 @@ const getAllBooks = async (req,res)=>{
     try {
         
 
-        const books = await Book.find({});
+        const books = await Book.find({});  // Tüm kayıtları bul
 
         return res.json({
             res :true,
@@ -83,7 +83,7 @@ const getBookById = async (req, res) => {
 
         const {id} = req.body;
 
-        const book = await Book.findOne({ id: id });
+        const book = await Book.findOne({ id: id });  // ide değerine göre bul
 
         if(!book){
 
@@ -118,7 +118,7 @@ const deleteBookById = async (req, res) => {
         
         const {id} = req.body;
 
-        const book = await  Book.findByIdAndDelete(id);
+        const book = await  Book.findByIdAndDelete(id);  // id değerine göre bul ve sil
 
         if(!book){
             return res.json({
