@@ -3,12 +3,12 @@
 
 Bu proje, React ile geliştirilmiş bir ön yüz ve Node.js ile MongoDB kullanan bir arka yüz içeren bir web uygulamasıdır. Uygulama, Schiphol Havalimanı'nın API'si ile uçuş bilgilerini listeler, kullanıcıların uçuş rezervasyonu yapmasına olanak tanır ve rezervasyonları bir veritabanına kaydeder.
 
+
 # Proje Kurulumu
 
 Uygulamayı kendi localinizde çalıştırabilmek için öncelikle projeyi localinize klonlayın.
 
 ` git clone https://github.com/kuloglusalih10/App-Fellas-Test-Case.git`
-
 
 Ardından proje kök ve ` /backend ` dizinlerinde bulunan .env.example dosyalarını kendi ortam değişkenlerinize göre düzenleyip isimlerini ` .env ` olarak değiştirin.
 
@@ -90,6 +90,9 @@ Son olarak kök ve ``` /backend``` dizininde ```npm run dev``` komutunu çalış
 * Rezervasyon yapılabilir ve rezervasyonlar MongoDB veritabanına kaydedilir.
 * Geçmiş tarihli rezervasyonlar ve zaten kayıtlı olan uçuşların rezerve edilmesi engellenir ve kullanıcıya bildirim olarak gösterilir.
 
+<img width="1710" alt="Ekran Resmi 2024-09-24 17 42 47" src="https://github.com/user-attachments/assets/421b855e-9ea8-4ed6-9da3-b9180d7449a5">
+
+
 **Uçuşlarım**
 
 * MongoDB üzerine kayıtlı rezervasyonlar listelenebilir.
@@ -101,6 +104,8 @@ Son olarak kök ve ``` /backend``` dizininde ```npm run dev``` komutunu çalış
     - Uçuş süresi ( ⚠️ Apiden kaynaklı bazı uçuş süreleri - veya 0 olarak gözükmektedir)
     - Havayolu logosu
     - Ücret ( uçuş süresine göre hesaplanmıştır, süresi - ve 0 olan uçuşlar için 0$ olarak fiyat belirlenmiştir)
+
+<img width="1710" alt="Ekran Resmi 2024-09-24 17 43 39" src="https://github.com/user-attachments/assets/28c79766-f407-43c0-929a-7e423f6b41d9">
 
 
 **Backend**
@@ -114,3 +119,5 @@ Son olarak kök ve ``` /backend``` dizininde ```npm run dev``` komutunu çalış
   - `/api/books/add-book` -> Yeni rezervasyon ekleme
   - `/api/books/delete-book` -> Rezervasyon silme
   - `/api/books/get-book` -> Bir rezervasyonu görüntüleme
+
+<img width="1710" alt="Ekran Resmi 2024-09-24 17 47 28" src="https://github.com/user-attachments/assets/310ddc95-b05f-4bdb-b531-55993be2a19f">
