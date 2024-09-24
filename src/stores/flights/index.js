@@ -3,7 +3,7 @@ import axios from "axios";
 import { formatDuration } from "../../utils/formatDuration";
 import { calculatePrice } from "../../utils/calculatePrice";
 import { formatTimes } from "../../utils/formatTimes";
-
+import { toast } from "react-toastify";
 
 
 export const _fetchFlights = createAsyncThunk(
@@ -167,7 +167,7 @@ const flights = createSlice({
 
     builder.addCase(_fetchFlights.rejected, (state,action)=>{
 
-       
+        toast('Bağlantı hatası', {type: 'error'})
         state.isLoading = false;
         state.isError = true;
         state.isSuccess = false;
@@ -179,7 +179,6 @@ const flights = createSlice({
         state.isLoading = true;
         state.isError = false;
         state.isSuccess = false;
-
         
     }),
 

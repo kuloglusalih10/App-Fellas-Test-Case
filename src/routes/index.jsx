@@ -3,6 +3,7 @@ import HomeLayout from "../layouts/HomeLayout";
 import Home from "../screens/Home";
 import Books from "../screens/Books"
 import BookLayout from "../layouts/BooksLayout"
+import NotFound from "../screens/NotFound"
 
 const routes = createBrowserRouter([
     {
@@ -25,6 +26,10 @@ const routes = createBrowserRouter([
           element: <Books />
         }
       ]
+    },
+    {
+      path: '*',
+      element: <NotFound/>
     }
   ])
   
