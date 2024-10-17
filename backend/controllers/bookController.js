@@ -118,6 +118,8 @@ const deleteBookById = async (req, res) => {
         
         const {id} = req.body;
 
+        console.log('body : ', req.body);
+
         const book = await  Book.findByIdAndDelete(id);  // id değerine göre bul ve sil
 
         if(!book){
